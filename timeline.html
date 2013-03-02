@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <title>Webcam</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!--[if IE]><script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <style>    
+  img { max-width: 100%; height: auto; }  
+  p { margin-top: 0; }
+  .hide { display: none; }  
+  </style>
+</head>
+<body> 
+<div class="page" id="wrapper">
+  <h1>Webcam</h1>
+  <p><a href="index.html">Live</a> - <a href="timeline.html">Timeline</a> // by <a href="http://my-azur.de/" target="_blank">my-azur.de</a></p>
+  <h2>Timeline</h2>
+  <div id="timeline"></div>
+  <img src="http://holder.my-azur.de/1280x300/ffffff/cccccc&text=want%20more%3F%20scroll%20down%20..." />
+</div>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script>
+var count = 0 // counter for timeline
+$(document).ready(function(){
+  /* = Timeline
+   * ----------------------------------------------------*/
+  
+  $.getJSON('ajax.php', {
+    a: 'archiv',
+    n: '100'
+  }, function(archiv) {
+    console.log(archiv);
+    addTimelineImage(archiv); // add first timeline image
+    setInterval(function(){ addTimelineImage(archiv); },200); // on scroll add timeline image
+  }); // END: getJSON    
+  
+  function addTimelineImage(archiv) {
+     if(count < archiv.length && jQuery(window).scrollTop() + jQuery(window).height() > jQuery(document).height() - 50) {
+         var img = jQuery('<img src="archiv/'+archiv[count]+'"/>');
+         jQuery('#timeline').append(img);   
+         count++;
+     }
+  }
+                              
+}); // END jQuery.ready       
+</script>
+</body>
+</html>

@@ -1,124 +1,71 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="de">
 <head>
   <meta charset="utf-8" />
   <title>Webcam</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <!--[if IE]><script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
-  <style>
-  img {
-    max-width: 100%;
-    height: auto;
-  }
-  p {
-    margin-top: 0;
-  }
-  .hide {
-    display: none;
-  }
+	<!--[if IE]><script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <style>    
+  img { max-width: 100%; height: auto; }  
+  p { margin-top: 0; }
+  .hide { display: none; }  
   </style>
 </head>
-<body>
+<body> 
 <div class="page" id="wrapper">
   <h1>Webcam</h1>
-  <p><a href="http://de.wikipedia.org/wiki/Zwergmaus" target="_blank">Eurasische ZwergmÃ¤e</a> by <a href="http://my-azur.de/" target="_blank">my-azur.de</a></p>
+  <p><a href="index.html">Live</a> - <a href="timeline.html">Timeline</a> // by <a href="http://my-azur.de/" target="_blank">my-azur.de</a></p>
   <div class="live">
-    <img src="" alt="Live" title="Webcam Live" border="0" id="liveimage" />
+    <img src="http://holder.my-azur.de/720x394/4477aa/ffffff&text=loading+Liveimage+..." alt="Live" title="Webcam Live" border="0" id="liveimage" />
     <p><small>Automatic reload every <span id="liveReloadTime">X</span> seconds</small></p>
-  </div>
-
-  <h2>History</h2>
-  <div id="history">
-    <div id="timeline"></div>
-    <div class="player hide">
-      <p><button id="startstop" data-action="1">Start</button> <span class="status"></span></p>
-      <img src="" alt="historyImage" title="History Image" border="0" class="hide" id="historyimg"/>
-      <img src="" border="0" class="preload hide" id="preload" />
-    </div>
-  </div>
+  </div>  
 </div>
-
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script>
-var liveReloadTime = 60000 // reload live image every x second
-  , count = 0 // counter for history timeline
-  , loading = false; // check for loading
+var liveReloadTime = 5000 // reload live image every x second
+    , timestamp = new Date().getTime()
+    , livefilemtime = 0;
 $(document).ready(function(){
+  jQuery.ajaxSetup({
+    "error":function() { showerror("unknown error");  }
+  });
+
+  jQuery('#liveimage').error(function(){
+    showerror('error loading Liveimage');
+  });
+
+
   /* = Live
    * ----------------------------------------------------*/
   jQuery('#liveReloadTime').text(liveReloadTime/1000);
 
-  var limg = jQuery('#liveimage');
-  limg.attr('src', 'live.jpg'); // set initial live image
-  limg.load(function(){
-    console.log('Live image loaded');
-  });
+  reloadLive();
 
   setInterval(reloadLive,liveReloadTime);
   function reloadLive(){ // set (new) live image every x second
-    var timestamp = new Date().getTime();
-    jQuery('#liveimage').attr('src', 'live.jpg?'+timestamp);
-    console.log('Live: reload: live.jpg?'+timestamp);
+    console.log('reload');
+    $.getJSON('ajax.php', {
+      a: 'livefilemtime'
+    }, function(data) {
+      //console.log(data);
+      if(livefilemtime != data.livefilemtime){
+        livefilemtime = data.livefilemtime;
+        var timestamp = new Date().getTime();
+        jQuery('#liveimage').attr('src', 'live.jpg?'+timestamp);
+        console.log('reload live.jpg?'+timestamp);
+      }else{
+        console.log('live.jpg not changed');
+      }
+    }).error(function() { 
+      showerror('error liveimage status');
+    }); // END: getJSON 
   }
-
-  /* = History Timeline
-   * ----------------------------------------------------*/
-
-  $.getJSON('archiv.php?callback=?', {
-    n: '100'
-  }, function(archiv) {
-    console.log(archiv);
-    addTimelineImage(archiv); // add first timeline image
-    setInterval(function(){ addTimelineImage(archiv); },500); // on scroll add timeline image
-  }); // END: getJSON
-
-  function addTimelineImage(archiv) {
-     if(!loading && count < archiv.length && jQuery(window).scrollTop() + jQuery(window).height() > jQuery(document).height() - 100) {
-         loading = true;
-         var img = jQuery('<img src="archiv/'+archiv[count]+'"/>').load(function(){
-          loading = false;
-         })
-         jQuery('#history #timeline').append(img);
-         count++;
-     }
-  }
-
-
-  /* = History Player
-   * ----------------------------------------------------*/
-  var himg = jQuery('#historyimg');
-  var pimg = jQuery('#preload');
-
-
-  // set history player start image; delayed 1 sec
-  setTimeout(function(){ // this is for speed limit
-    himg.attr('src', history[0]).load(function() { jQuery(this).show(); });
-  },1000);
-
-  // handle Start/Stop
-  jQuery('#startstop').click(function() {
-    if( jQuery(this).attr('data-action') == 1 ) { // if start
-      jQuery(this).attr('data-action', 0).text("Stop");
-
-      // initial image loading
-      himg.attr('src', history[count]);
-      pimg.attr('src', history[count+1]);
-
-      // if preload image is loaded, show it and preload next
-      pimg.load(function() {
-        setTimeout(function(){ // this is for speed limit
-          count++;
-          jQuery('#history .status').text('Showing '+history[count]);
-          himg.attr('src', history[count]);
-          pimg.attr('src', history[count+1]);
-        },500);
-      });
-    }else{ // else stop
-      jQuery(this).attr('data-action', 1).text("Start");
-      pimg.unbind('load');
-    }
-  });
+                              
 }); // END jQuery.ready
+
+function showerror(t) {
+      jQuery('#liveimage').attr('src', 'http://holder.my-azur.de/720x394/7e051e/ffffff&text='+t);
+}
 </script>
 </body>
 </html>
