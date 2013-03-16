@@ -14,7 +14,7 @@
 <body> 
 <div class="page" id="wrapper">
   <h1>Webcam</h1>
-  <p><a href="index.html">Live</a> - <a href="timeline.html">Timeline</a> // by <a href="http://my-azur.de/" target="_blank">my-azur.de</a></p>
+  <p><a href="index.html">Live</a> - <a href="slider.html">Slider</a> - <a href="timeline.html">Timeline</a> // by <a href="http://my-azur.de/" target="_blank">my-azur.de</a></p>
   <h2>Timeline</h2>
   <div id="timeline"></div>
   <img src="http://holder.my-azur.de/1280x300/ffffff/cccccc&text=want%20more%3F%20scroll%20down%20..." />
@@ -38,7 +38,11 @@ $(document).ready(function(){
   function addTimelineImage(archiv) {
      if(count < archiv.length && jQuery(window).scrollTop() + jQuery(window).height() > jQuery(document).height() - 50) {
          var img = jQuery('<img src="archiv/'+archiv[count]+'"/>');
-         jQuery('#timeline').append(img);   
+				 var entry = jQuery('<div class="entry" />');
+				 
+				 entry.append(img);
+				 
+         jQuery('#timeline').append(entry);   
          count++;
      }
   }

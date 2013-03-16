@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <title>Webcam</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!--[if IE]><script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <style>    
+  img {
+    max-width: 100%;
+    height: auto;
+  }  
+  p {
+    margin-top: 0;
+  }
+  .hide {
+    display: none;
+  }  
+	
+	#slider {
+	width: 100%;
+	}
+  </style>
+</head>
+<body> 
+<div class="page" id="wrapper">
+  <h1>Webcam</h1>
+  <p><a href="index.html">Live</a> - <a href="slider.html">Slider</a> - <a href="timeline.html">Timeline</a> // by <a href="http://my-azur.de/" target="_blank">my-azur.de</a></p>
+  <h2>History</h2>
+  <div id="history">
+		<div id="status"><span id="current"></span>/<span id="maxnum"></span> (<span id="statustext"></span>)</div>
+		<div id="control">
+		<input id="slider" disabled type="range" value="0" min="0" step="1" />
+		^^ NOW  -->--> PAST
+		</div>
+    <div id="player"><img id="playerimg"/></div>
+  </div>
+</div>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+<script>
+	
+$(document).ready(function(){
+	var num = 500;
+	var TT = ""; //"timthumb.php?w=720&src=";
+	var images;
+	var current = $('#current');
+	var maxnum = $('#maxnum');
+	var slider = $('#slider');
+	var statustext = $('#statustext');
+	var playerimg = $('#playerimg');
+	
+	current.text(0);
+	maxnum.text(num);
+	slider.attr('max', num-1);	
+	
+	$('#slider').change(function(){
+		console.log(this.value);
+		current.html(parseInt(this.value)+1);
+		playerimg.attr('src', TT+"archiv/"+images[this.value]);
+	}).removeAttr("disabled");		
+
+  $.getJSON('archiv.php', {n: num}, function(h) {
+		images = h;
+		playerimg.attr('src', TT+"archiv/"+images[0]);
+		
+		var count = 0;
+		var	preloadimg = $('<img />').load(function() {
+		count++;
+		var showcount = count+1;
+		if(count >= images.length) {
+			$(this).unbind('load'); 
+			statustext.text('loading ready');
+			preloadDone();
+			return true;
+		}		
+		console.log("Loading:"+images[count]);
+		current.text(showcount);
+		statustext.text('loading');
+		$(this).attr('src', TT+"archiv/"+images[count]);
+	}).attr('src', TT+"archiv/"+images[0]);
+		
+  }); // END: getJSON   
+	    
+
+function preloadDone() {
+	$('#slider').change(function(){
+		console.log(this.value);
+		current.html(parseInt(this.value)+1);
+		playerimg.attr('src', TT+"archiv/"+images[this.value]);
+	}).removeAttr("disabled").change();			
+}
+}); // END jQuery.ready       
+</script>
+</body>
+</html>

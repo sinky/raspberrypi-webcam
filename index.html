@@ -14,10 +14,11 @@
 <body> 
 <div class="page" id="wrapper">
   <h1>Webcam</h1>
-  <p><a href="index.html">Live</a> - <a href="timeline.html">Timeline</a> // by <a href="http://my-azur.de/" target="_blank">my-azur.de</a></p>
+  <p><a href="index.html">Live</a> - <a href="slider.html">Slider</a> - <a href="timeline.html">Timeline</a> // by <a href="http://my-azur.de/" target="_blank">my-azur.de</a></p>
   <div class="live">
     <img src="http://holder.my-azur.de/720x394/4477aa/ffffff&text=loading+Liveimage+..." alt="Live" title="Webcam Live" border="0" id="liveimage" />
     <p><small>Automatic reload every <span id="liveReloadTime">X</span> seconds</small></p>
+		<p><small>This is a static demo.</small></p>
   </div>  
 </div>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
@@ -56,8 +57,6 @@ $(document).ready(function(){
       }else{
         console.log('live.jpg not changed');
       }
-    }).error(function() { 
-      showerror('error liveimage status');
     }); // END: getJSON 
   }
                               

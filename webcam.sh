@@ -1,6 +1,6 @@
 #!/bin/bash
-# Logitech C270
-# 1280 x 720 // 720 x 394
+# Aufloesungen Logitech C270
+# 1280 x 720 // 800 x 438 // 720 x 394
 SAVEPATH="/var/www/webcam"
 TIMESTAMP="$(date "+%s")"
 
@@ -15,4 +15,4 @@ sudo chown www-data.users ${SAVEPATH}/archiv/${TIMESTAMP}.jpg
 sudo chmod 774 ${SAVEPATH}/archiv/${TIMESTAMP}.jpg
 
 #delete old archiv images
-(ls -t ${SAVEPATH}/archiv/*.jpg |head -n 1440;ls ${SAVEPATH}/archiv/*.jpg)|sort|uniq -u|xargs rm
+(ls -t ${SAVEPATH}/archiv/*.jpg |head -n 14400;ls ${SAVEPATH}/archiv/*.jpg)|sort|uniq -u|xargs rm
