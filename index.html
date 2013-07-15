@@ -15,10 +15,10 @@
 <div class="page" id="wrapper">
   <h1>Webcam</h1>
   <p><a href="index.html">Live</a> - <a href="slider.html">Slider</a> - <a href="timeline.html">Timeline</a> // by <a href="http://my-azur.de/" target="_blank">my-azur.de</a></p>
+  <div class="danger">Experimental, only tested with Chrome</div>
   <div class="live">
-    <img src="http://holder.my-azur.de/720x394/4477aa/ffffff&text=loading+Liveimage+..." alt="Live" title="Webcam Live" border="0" id="liveimage" />
+    <img src="http://holder.my-azur.de/720x394/ffffff/cccccc&text=loading+Liveimage+..." alt="Live" title="Webcam Live" border="0" id="liveimage" />
     <p><small>Automatic reload every <span id="liveReloadTime">X</span> seconds</small></p>
-		<p><small>This is a static demo.</small></p>
   </div>  
 </div>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
@@ -45,12 +45,10 @@ $(document).ready(function(){
   setInterval(reloadLive,liveReloadTime);
   function reloadLive(){ // set (new) live image every x second
     console.log('reload');
-    $.getJSON('ajax.php', {
-      a: 'livefilemtime'
-    }, function(data) {
-      //console.log(data);
-      if(livefilemtime != data.livefilemtime){
-        livefilemtime = data.livefilemtime;
+    $.get('lastsnap.txt', function(data) {
+      console.log(data);
+      if(livefilemtime != data){
+        livefilemtime = data;
         var timestamp = new Date().getTime();
         jQuery('#liveimage').attr('src', 'live.jpg?'+timestamp);
         console.log('reload live.jpg?'+timestamp);

@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<!--[if IE]><script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
   <style>    
-  img { max-width: 100%; height: auto; }  
+  img { max-width: 100%; height: auto; display: block;}  
   p { margin-top: 0; }
   .hide { display: none; }  
   </style>
@@ -15,37 +15,46 @@
 <div class="page" id="wrapper">
   <h1>Webcam</h1>
   <p><a href="index.html">Live</a> - <a href="slider.html">Slider</a> - <a href="timeline.html">Timeline</a> // by <a href="http://my-azur.de/" target="_blank">my-azur.de</a></p>
+  <div class="danger">Experimental, only tested with Chrome</div>
   <h2>Timeline</h2>
   <div id="timeline"></div>
-  <img src="http://holder.my-azur.de/1280x300/ffffff/cccccc&text=want%20more%3F%20scroll%20down%20..." />
+  <!--<img src="http://holder.my-azur.de/1280x300/ffffff/cccccc&text=want%20more%3F%20scroll%20down%20..." />-->
 </div>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script>
 var count = 0 // counter for timeline
+var images;
+var num = 500;
 $(document).ready(function(){
   /* = Timeline
    * ----------------------------------------------------*/
   
   $.getJSON('ajax.php', {
     a: 'archiv',
-    n: '100'
-  }, function(archiv) {
-    console.log(archiv);
-    addTimelineImage(archiv); // add first timeline image
-    setInterval(function(){ addTimelineImage(archiv); },200); // on scroll add timeline image
+    n: num
+  }, function(data) {
+	console.log(data);
+	images = data.archiv;
+
+var timeline = $('#timeline');
+var img = $('<img src="archiv/'+images[0]+'"/>').load(function() {
+  addImg();
+});
+
+timeline.append(img);
+
+function addImg() {
+  console.log(count);
+  if(count >= num) {$(this).unbind('load'); return true;}
+  var img = $('<img src="archiv/'+images[count]+'"/>').load(function() {
+    addImg();
+  }); 
+  timeline.append(img);
+  count++;
+}
+
   }); // END: getJSON    
   
-  function addTimelineImage(archiv) {
-     if(count < archiv.length && jQuery(window).scrollTop() + jQuery(window).height() > jQuery(document).height() - 50) {
-         var img = jQuery('<img src="archiv/'+archiv[count]+'"/>');
-				 var entry = jQuery('<div class="entry" />');
-				 
-				 entry.append(img);
-				 
-         jQuery('#timeline').append(entry);   
-         count++;
-     }
-  }
                               
 }); // END jQuery.ready       
 </script>

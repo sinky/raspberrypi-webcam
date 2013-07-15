@@ -22,13 +22,12 @@ if($_GET['a'] == "livefilemtime") {
     }
   }
   natsort($archiv);
-  $r = array_reverse($archiv);
+  $archiv = array_reverse($archiv);
 
-  //$n = $_GET['n'];
-  //if($n < 1 || $n > 100) {
-  //  $n = 100;
-  //}
-  //$archiv = array_slice($archiv, 0, $n);
+  $n = $r->count = $_GET['n'];
+  if($n < 1) { $n = 1; }
+  $r->archiv = array_slice($archiv, 0, $n);
+
 }
 
 echo json_encode($r);
